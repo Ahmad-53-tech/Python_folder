@@ -11,11 +11,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
-
-
 class SnackSwiftAPIHandler(BaseHTTPRequestHandler):
     menu = [
-        {"item": "burger", "price": 4.99},
+        {"item": "Burger", "price": 4.99},
         {"item": "Fries", "price": 5.99},
         {"item": "Soda", "price": 3.99}
     ]
@@ -24,7 +22,7 @@ class SnackSwiftAPIHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
-            if self.path == "/menu":
+            if self.path.lower() == "/menu":
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
@@ -36,7 +34,7 @@ class SnackSwiftAPIHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
-            if self.path == "/order":
+            if self.path.lower() == "/order":
                 content_length = int(self.headers.get("Content-Length", 0))
                 post_data = self.rfile.read(content_length)
 
@@ -46,28 +44,37 @@ class SnackSwiftAPIHandler(BaseHTTPRequestHandler):
                     self.send_error(400, "Invalid JSON format")
                     return
 
+                item = data.get("item")
+                quantity = data.get("quantity")
+
+                if not item or not isinstance(quantity, int):
+                    self.send_error(400, "Missing or invalid 'item' or 'quantity'")
+                    return
+
+                valid_items = [food["item"] for food in self.menu]
+                if item not in valid_items:
+                    self.send_error(400, "Item not on menu")
+                    return
+
+                self.orders.append({"item": item, "quantity": quantity})
+
+                response = {
+                    "message": f"Order received for {quantity} {item}(s)"
+                }
+
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
-
-                quantity = data.get("quantity")
-                item = data.get("item")
-                response = {f"Order received for {quantity} {item}"}
                 self.wfile.write(json.dumps(response).encode())
-
-
             else:
                 self.send_error(404, "Path not found")
         except Exception as e:
             self.send_error(500, f"Internal Server Error: {str(e)}")
 
-
-
+# Run the server
 server_address = ("", 8000)
 httpd = HTTPServer(server_address, SnackSwiftAPIHandler)
 print("Server is running on http://localhost:8000")
-
 httpd.serve_forever()
-
 
 
