@@ -47,24 +47,23 @@ class SnackSwiftAPIHandler(BaseHTTPRequestHandler):
                 item = data.get("item")
                 quantity = data.get("quantity")
 
-                if not item or not isinstance(quantity, int):
-                    self.send_error(400, "Missing or invalid 'item' or 'quantity'")
-                    return
+                if not item:
+                    raise ValueError("Item not in menu.")
 
-                valid_items = [food["item"] for food in self.menu]
-                if item not in valid_items:
-                    self.send_error(400, "Item not on menu")
-                    return
+                if type(quantity) != int:
+                    raise ValueError("Quantity should be a number(int).")
 
-                self.orders.append({"item": item, "quantity": quantity})
+
+
+
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
 
                 response = {
                     "message": f"Order received for {quantity} {item}(s)"
                 }
 
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
                 self.wfile.write(json.dumps(response).encode())
             else:
                 self.send_error(404, "Path not found")
