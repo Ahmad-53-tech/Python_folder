@@ -20,3 +20,16 @@
 #3. Create a cursor object to interact with the database.
 #4. Execute SQL queries using the cursor.
 #5. Commit changes (if needed) and close the connection.
+
+# WHY CODE IS NEEDED FOR DATABASE OPERATIONS
+# 1. With code, you can automate repetitive operations ensuring
+#consistency and efficiency. For example, you can create scripts that automatically insert data into the database at regular intervals or perform bug update.
+#2. Code allows you to integrate database integrations directly with the logic of your application. This means that when a user interacts with your application (submit
+#a form), the data can be automatically inserted, updated or deleted in the database without manual intervention.
+#3. Code allows you to scale operations. you can automate the insertion of large volumes of data using loops or perform complex queries to extract large data sets in
+#seconds.
+#4. When writing code to interact with the database, you can implement validation checks to ensure that only valid data is entered.
+#5. When using code, you can use placeholders to prevent SQL injection.
+#6. Code can be shared, versioned and deployed across various environments.
+#7. Using code allows for easy tracking and documentation of changes.
+
